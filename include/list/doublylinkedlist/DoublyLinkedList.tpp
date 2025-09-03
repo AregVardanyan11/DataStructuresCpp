@@ -1,38 +1,39 @@
-#ifndef EXAMPLE_SINGLYLINKEDLIST_TPP
-#define EXAMPLE_SINGLYLINKEDLIST_TPP
+#ifndef EXAMPLE_DOUBLYLINKEDLIST_TPP
+#define EXAMPLE_DOUBLYLINKEDLIST_TPP
 
-
-#include "SinglyLinkedList.h"
-#include "stdexcept"
-#include "iostream"
+#include "DoublyLinkedList.h"
 
 template<typename T>
-SinglyLinkedList<T>::SinglyLinkedList() : head(nullptr), tail(nullptr) {}
+DoublyLinkedList<T>::DoublyLinkedList() : head(nullptr), tail(nullptr) {
+
+}
 
 template<typename T>
-SinglyLinkedList<T>::~SinglyLinkedList() {
+DoublyLinkedList<T>::~DoublyLinkedList() {
     clear();
 }
 
 template<typename T>
-void SinglyLinkedList<T>::push_front(const T &value) {
+void DoublyLinkedList<T>::push_front(const T &value) {
+    Node<T>* newNode = new Node<T>(value);
+    if (!tail) {
+        head = tail = newNode;
+    }else {
+        newNode->next = head;
+        head->prev = newNode;
+        head = newNode;
+    }
+    count++;
+
+}
+
+template<typename T>
+void DoublyLinkedList<T>::push_back(const T &value) {
     Node<T>* newNode = new Node<T>(value);
     if (!tail) {
         tail = head = newNode;
     }else {
-        newNode->next = head;
-        head = newNode;
-    }
-    count++;
-}
-
-template<typename T>
-void SinglyLinkedList<T>::push_back(const T &value) {
-    Node<T> *newNode = new Node(value);
-    if (!tail) {
-        head = tail = newNode;
-    }
-    else {
+        newNode->prev = tail;
         tail->next = newNode;
         tail = newNode;
     }
@@ -40,7 +41,7 @@ void SinglyLinkedList<T>::push_back(const T &value) {
 }
 
 template<typename T>
-void SinglyLinkedList<T>::insert(int index, const T &value) {
+void DoublyLinkedList<T>::insert(int index, const T &value) {
     if (index < 0 || index > count) {
         throw std::out_of_range("Invalid index");
     }
@@ -50,14 +51,19 @@ void SinglyLinkedList<T>::insert(int index, const T &value) {
     Node<T>* prev = head;
     for (int i = 0; i < index-1; i++) prev = prev->next;
 
-    Node<T> *newNode = new Node(value);
-    newNode->next = prev->next;
-    prev->next = newNode;
+    Node<T> *current = new Node(value);
+    Node<T>* next = prev->next;
+
+    current->next = prev->next;
+    current->prev = prev;
+    prev->next = current;
+    next->prev = current;
+
     count++;
 }
 
 template<typename T>
-void SinglyLinkedList<T>::pop_front() {
+void DoublyLinkedList<T>::pop_front() {
     if (isEmpty()) {
         throw std::out_of_range("Empty list");
     }
@@ -69,12 +75,13 @@ void SinglyLinkedList<T>::pop_front() {
     }
     Node<T> *prev = head;
     head = head->next;
+    head->prev = nullptr;
     delete prev;
     count--;
 }
 
 template<typename T>
-void SinglyLinkedList<T>::pop_back() {
+void DoublyLinkedList<T>::pop_back() {
     if (isEmpty()) {
         throw std::out_of_range("Empty list");
     }
@@ -84,16 +91,15 @@ void SinglyLinkedList<T>::pop_back() {
         count--;
         return;
     }
-    Node<T> *prev = head;
-    while (prev->next != tail) prev = prev->next;
-    delete tail;
-    tail = prev;
+    Node<T> *next = tail;
+    tail = tail->prev;
     tail->next = nullptr;
+    delete next;
     count--;
 }
 
 template<typename T>
-void SinglyLinkedList<T>::remove(int index) {
+void DoublyLinkedList<T>::remove(int index) {
     if (index < 0 || index > count) {
         throw std::out_of_range("Invalid index");
     }
@@ -103,13 +109,14 @@ void SinglyLinkedList<T>::remove(int index) {
     Node<T> *prev = head;
     for (int i = 0; i < index-1; i++) prev = prev->next;
     Node<T>* temp = prev->next;
+    temp->next->prev = prev;
     prev->next = temp->next;
     delete temp;
     count--;
 }
 
 template<typename T>
-T & SinglyLinkedList<T>::get(int index) {
+T & DoublyLinkedList<T>::get(int index) {
     if (index < 0 || index >= count) {
         throw std::out_of_range("Invalid index");
     }
@@ -119,7 +126,7 @@ T & SinglyLinkedList<T>::get(int index) {
 }
 
 template<typename T>
-const T & SinglyLinkedList<T>::get(int index) const {
+const T & DoublyLinkedList<T>::get(int index) const {
     if (index < 0 || index >= count) {
         throw std::out_of_range("Invalid index");
     }
@@ -129,17 +136,17 @@ const T & SinglyLinkedList<T>::get(int index) const {
 }
 
 template<typename T>
-int SinglyLinkedList<T>::size() const {
-    return this->count;
+int DoublyLinkedList<T>::size() const {
+    return count;
 }
 
 template<typename T>
-bool SinglyLinkedList<T>::isEmpty() const {
-    return this->count == 0;
+bool DoublyLinkedList<T>::isEmpty() const {
+    return count == 0;
 }
 
-template <typename T>
-void SinglyLinkedList<T>::print() const {
+template<typename T>
+void DoublyLinkedList<T>::print() const {
     Node<T>* curr = head;
     while (true) {
         std::cout << curr->value;
@@ -153,8 +160,10 @@ void SinglyLinkedList<T>::print() const {
 }
 
 template<typename T>
-void SinglyLinkedList<T>::clear() {
-    while (!isEmpty()) pop_front();
+void DoublyLinkedList<T>::clear() {
+    while (!isEmpty()) {
+        pop_front();
+    }
 }
 
-#endif //EXAMPLE_SINGLYLINKEDLIST_TPP
+#endif //EXAMPLE_DOUBLYLINKEDLIST_TPP
