@@ -1,10 +1,19 @@
-#ifndef SINGLY_LINKED_LIST_H
-#define SINGLY_LINKED_LIST_H
+//
+// Created by areg on 9/3/25.
+//
+
+#ifndef EXAMPLE_CIRCULARLINKEDLIST_H
+#define EXAMPLE_CIRCULARLINKEDLIST_H
+
+#ifndef CIRCULAR_LINKED_LIST_H
+#define CIRCULAR_LINKED_LIST_H
 
 #include "../List.h"
+#include <iostream>
+#include <stdexcept>
 
 template <typename T>
-class SinglyLinkedList : public List<T> {
+class CircularLinkedList : public List<T> {
 private:
     template <typename E>
     struct Node {
@@ -13,13 +22,14 @@ private:
         Node(const E& value) : value(value), next(nullptr) {}
     };
 
-    Node<T>* head;
+    Node<T>* tail;
     int count{0};
 
 public:
-    SinglyLinkedList();
-    ~SinglyLinkedList();
+    CircularLinkedList();
+    ~CircularLinkedList() override;
 
+    // List interface
     void push_front(const T& value) override;
     void push_back(const T& value) override;
     void insert(int index, const T& value) override;
@@ -35,10 +45,14 @@ public:
     bool isEmpty() const override;
 
     void print() const override;
-
     void clear() override;
+
+    void rotate();
 };
 
-#include "SinglyLinkedList.tpp"
+#include "CircularLinkedList.tpp" // include template implementation
 
-#endif // SINGLY_LINKED_LIST_H
+#endif // CIRCULAR_LINKED_LIST_H
+
+
+#endif //EXAMPLE_CIRCULARLINKEDLIST_H

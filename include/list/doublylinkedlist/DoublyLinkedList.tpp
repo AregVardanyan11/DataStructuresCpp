@@ -24,7 +24,6 @@ void DoublyLinkedList<T>::push_front(const T &value) {
         head = newNode;
     }
     count++;
-
 }
 
 template<typename T>
@@ -112,6 +111,7 @@ void DoublyLinkedList<T>::remove(int index) {
     temp->next->prev = prev;
     prev->next = temp->next;
     delete temp;
+    temp = nullptr;
     count--;
 }
 

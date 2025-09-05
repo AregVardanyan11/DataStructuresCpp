@@ -1,4 +1,6 @@
 #include <gtest/gtest.h>
+
+#include "list/circularylinkedlist/CircularLinkedList.h"
 #include "list/singlylinkedlist/SinglyLinkedList.h"
 #include "list/doublylinkedlist/DoublyLinkedList.h"
 
@@ -9,7 +11,8 @@ int main(int argc, char **argv) {
 
 typedef ::testing::Types<
     SinglyLinkedList<int>,
-    DoublyLinkedList<int>
+    DoublyLinkedList<int>,
+    CircularLinkedList<int>
 > ListImplementations;
 
 template <typename T>

@@ -7,7 +7,7 @@
 #include "iostream"
 
 template<typename T>
-SinglyLinkedList<T>::SinglyLinkedList() : head(nullptr), tail(nullptr) {}
+SinglyLinkedList<T>::SinglyLinkedList() : head(nullptr){}
 
 template<typename T>
 SinglyLinkedList<T>::~SinglyLinkedList() {
@@ -17,8 +17,8 @@ SinglyLinkedList<T>::~SinglyLinkedList() {
 template<typename T>
 void SinglyLinkedList<T>::push_front(const T &value) {
     Node<T>* newNode = new Node<T>(value);
-    if (!tail) {
-        tail = head = newNode;
+    if (!head) {
+        head = newNode;
     }else {
         newNode->next = head;
         head = newNode;
@@ -29,12 +29,13 @@ void SinglyLinkedList<T>::push_front(const T &value) {
 template<typename T>
 void SinglyLinkedList<T>::push_back(const T &value) {
     Node<T> *newNode = new Node(value);
-    if (!tail) {
-        head = tail = newNode;
+    if (!head) {
+        head = newNode;
     }
     else {
-        tail->next = newNode;
-        tail = newNode;
+        Node<T> *prev = head;
+        while (prev->next) prev = prev->next;
+        prev->next = newNode;
     }
     count++;
 }
@@ -61,34 +62,23 @@ void SinglyLinkedList<T>::pop_front() {
     if (isEmpty()) {
         throw std::out_of_range("Empty list");
     }
-    if (head == tail) {
-        delete head;
-        head = tail = nullptr;
-        count--;
-        return;
-    }
-    Node<T> *prev = head;
+    Node<T> *current = head;
     head = head->next;
-    delete prev;
+    delete current;
+    current = nullptr;
     count--;
 }
 
 template<typename T>
 void SinglyLinkedList<T>::pop_back() {
-    if (isEmpty()) {
+    if (count == 0) {
         throw std::out_of_range("Empty list");
     }
-    if (head == tail) {
-        delete head;
-        head = tail = nullptr;
-        count--;
-        return;
-    }
+    if (count == 0) pop_front();
     Node<T> *prev = head;
-    while (prev->next != tail) prev = prev->next;
-    delete tail;
-    tail = prev;
-    tail->next = nullptr;
+    while (prev->next->next) prev = prev->next;
+    delete prev->next;
+    prev->next = nullptr;
     count--;
 }
 
@@ -102,9 +92,10 @@ void SinglyLinkedList<T>::remove(int index) {
 
     Node<T> *prev = head;
     for (int i = 0; i < index-1; i++) prev = prev->next;
-    Node<T>* temp = prev->next;
-    prev->next = temp->next;
-    delete temp;
+    Node<T>* current = prev->next;
+    prev->next = current->next;
+    delete current;
+    current = nullptr;
     count--;
 }
 
